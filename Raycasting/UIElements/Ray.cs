@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,17 +9,80 @@ namespace Raycasting
 {
     public class Ray
     {
-        private Vector _pos {  get; set; }
+        private Vector _pos;
         const int rayLength = 10;
-        
+        const int addAngle = 2;
+        public List<Line> _rays = new List<Line>();
+
         public Ray(Vector pos)
         {
             _pos = pos;
         }
 
-        public void CreateRay(List<Boundary> _boundaries, Canvas _Playground)
+        public void UpdateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
         {
-            for (int i = 0; i < 360; i += 10)
+            for (int i = 0; i < _rays.Count; i++)
+            {
+                double radians = (i * addAngle) * Math.PI / 180;
+                Vector direction = new Vector(Math.Cos(radians), Math.Sin(radians));
+
+                _rays[i].X1 = mousePos.X;
+                _rays[i].Y1 = mousePos.Y;
+                _rays[i].X2 = mousePos.X + direction.X * rayLength;
+                _rays[i].Y2 = mousePos.Y + direction.Y * rayLength;
+
+                Line updatedRay = GetClosestpoint(_boundaries, _rays[i], mousePos);
+
+                if (updatedRay != null)
+                {
+                    _Playground.Children.Add(updatedRay);
+                }
+                else
+                {
+                    _Playground.Children.Add(_rays[i]);
+                }
+            }
+
+            foreach (var ray in _rays)
+            {
+                
+            }
+        }
+
+        private Line GetClosestpoint(List<Boundary> _boundaries, Line ray, Vector pos)
+        {
+            Vector? closestpoint = null;
+            double minDist = double.MaxValue;
+
+            foreach (var boundary in _boundaries)
+            {
+                Vector? point = GetIntersection(ray, boundary.Line);
+
+                if (point.HasValue)
+                {
+                    double distance = Distance(pos, point.Value);
+
+                    if (distance < minDist)
+                    {
+                        minDist = distance;
+                        closestpoint = point;
+                    }
+                }
+            }
+
+            if (closestpoint.HasValue)
+            {
+                ray.X2 = closestpoint.Value.X;
+                ray.Y2 = closestpoint.Value.Y;
+
+                return ray;
+            }
+            return null;
+        }
+
+        public void CreateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
+        {
+            for (int i = 0; i < 360; i += addAngle)
             {
                 double radians = i * Math.PI / 180;
                 Vector direction = new Vector(Math.Cos(radians), Math.Sin(radians));
@@ -37,32 +97,19 @@ namespace Raycasting
                     Y2 = _pos.Y + direction.Y * rayLength
                 };
 
-                Vector? closestpoint = null;
-                double minDist = double.MaxValue;
+                _rays.Add(ray);
 
-                foreach (var boundary in _boundaries)
+                Line updatedRay = GetClosestpoint(_boundaries, ray, mousePos);
+
+                if (updatedRay != null)
                 {
-                    Vector? point = GetIntersection(ray, boundary.Line);
-                    
-                    if (point.HasValue)
-                    {
-                        double distance = Distance(_pos, point.Value);
-
-                        if (distance < minDist)
-                        {
-                            minDist = distance;
-                            closestpoint = point;
-                        }
-                    }
+                    _Playground.Children.Add(updatedRay);
                 }
-
-                if (closestpoint.HasValue)
+                else
                 {
-                    ray.X2 = closestpoint.Value.X;
-                    ray.Y2 = closestpoint.Value.Y;
+                    _Playground.Children.Add(ray);
                 }
-
-                _Playground.Children.Add(ray);
+                
             }
         }
 

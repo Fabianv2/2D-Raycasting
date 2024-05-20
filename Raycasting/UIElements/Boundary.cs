@@ -6,7 +6,7 @@ namespace Raycasting
 {
     public class Boundary
     {
-        public Line Line { get; set; }
+        public Line Line;
 
         public Boundary(double x1, double y1, double x2, double y2)
         {

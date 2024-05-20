@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Raycasting
 {
@@ -33,7 +23,7 @@ namespace Raycasting
 
         private void InitializeBoundaries()
         {
-            int amountBoundaries = 5;
+            int amountBoundaries = 10;
 
             for (int i = 0; i < amountBoundaries; i++)
             {
@@ -59,7 +49,7 @@ namespace Raycasting
 
         private void Playground_MouseMove(object sender, MouseEventArgs e)
         {
-            Vector mousePos = (Vector)e.GetPosition(this);
+            Vector mousePos = (Vector)e.GetPosition(Playground);
 
             Playground.Children.Clear();
 
@@ -68,9 +58,15 @@ namespace Raycasting
                 Playground.Children.Add(boundary.Line);
             }
 
-            _rayList.Clear();
-            _ray = new Ray(mousePos);
-            _ray.CreateRay(_boundaryList, Playground);
+            if(_ray != null)
+            {
+                _ray.UpdateRay(_boundaryList, Playground, mousePos);
+            }
+            else
+            {
+                _ray = new Ray(mousePos);
+                _ray.CreateRay(_boundaryList, Playground, mousePos);
+            }
         }
     }
 }
