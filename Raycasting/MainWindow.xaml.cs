@@ -9,21 +9,18 @@ namespace Raycasting
     {
         private Ray _ray;
         private Random _random = new Random();
-        private List<Ray> _rayList = new List<Ray>();
         private List<Boundary> _boundaryList = new List<Boundary>();
+        private List<Boundary> _boundaryLines = new List<Boundary>();
         
-
         public MainWindow()
         {
             InitializeComponent();
             InitializeBoundaries();
-
-            MouseMove += Playground_MouseMove;
         }
 
         private void InitializeBoundaries()
         {
-            int amountBoundaries = 10;
+            int amountBoundaries = _random.Next(4, 15);
 
             for (int i = 0; i < amountBoundaries; i++)
             {
@@ -35,12 +32,6 @@ namespace Raycasting
                 _boundaryList.Add(new Boundary(randomX1, randomY1, randomX2, randomY2));
             }
 
-            //Borderlines
-            //_boundaryList.Add(new Boundary(0, -1, 1000, -1)); //Top line
-            //_boundaryList.Add(new Boundary(-3, 0, -3, 1000)); //Left line
-            //_boundaryList.Add(new Boundary(1000, 0, 1000, 1000)); //Right line
-            //_boundaryList.Add(new Boundary(0, 1000, 1000, 1000)); //Bottom line
-
             foreach (var boundary in _boundaryList)
             {
                 Playground.Children.Add(boundary.Line);
@@ -51,22 +42,86 @@ namespace Raycasting
         {
             Vector mousePos = (Vector)e.GetPosition(Playground);
 
+            if (mousePos.X >= 0 && mousePos.X <= 1000 && mousePos.Y >= 0 && mousePos.Y <= 1000)
+            {
+                Playground.Children.Clear();
+
+                if (_boundaryLines != null && _boundaryLines.Count != 0)
+                {
+                    foreach (var boundary in _boundaryLines)
+                    {
+                        Playground.Children.Add(boundary.Line);
+                    }
+                }
+
+                foreach (var boundary in _boundaryList)
+                {
+                    Playground.Children.Add(boundary.Line);
+                }
+
+                if (_ray != null)
+                {
+                    _ray.UpdateRay(_boundaryList, Playground, mousePos);
+                }
+                else
+                {
+                    _ray = new Ray(mousePos);
+                    _ray.CreateRay(_boundaryList, Playground, mousePos);
+                }
+            }
+        }
+
+        private void btnCreateBoundaries_Click(object sender, RoutedEventArgs e)
+        {
+            CreateBoundaries();
+        }
+
+        private void CreateBoundaries()
+        {
+            _boundaryList.Clear();
             Playground.Children.Clear();
+            InitializeBoundaries();
 
-            foreach (var boundary in _boundaryList)
+            if (cbxBorderlines.IsChecked == true)
             {
-                Playground.Children.Add(boundary.Line);
+                AddBoundaryLines();
             }
+        }
 
-            if(_ray != null)
+        private void BoundaryLines_Checked(object sender, RoutedEventArgs e)
+        {
+            AddBoundaryLines();
+        }
+
+        private void BoundaryLines_Unchecked(object sender, RoutedEventArgs e)
+        {
+            RemoveBoundaryLines();
+        }
+
+        private void AddBoundaryLines()
+        {
+            _boundaryLines.Add(new Boundary(0, -1, 1000, -1));      //Top line
+            _boundaryLines.Add(new Boundary(-3, 0, -3, 1000));      //Left line
+            _boundaryLines.Add(new Boundary(1000, 0, 1000, 1000));  //Right line
+            _boundaryLines.Add(new Boundary(0, 1000, 1000, 1000));  //Bottom line
+            //_boundaryList.Add(new Boundary(0, -1, 1000, -1));      //Top line
+            //_boundaryList.Add(new Boundary(-3, 0, -3, 1000));      //Left line
+            //_boundaryList.Add(new Boundary(1000, 0, 1000, 1000));  //Right line
+            //_boundaryList.Add(new Boundary(0, 1000, 1000, 1000));  //Bottom line
+
+            //foreach (var boundary in _boundaryLines)
+            //{
+            //    Playground.Children.Add(boundary.Line);
+            //}
+        }
+
+        private void RemoveBoundaryLines()
+        {
+            foreach (var boundary in _boundaryLines)
             {
-                _ray.UpdateRay(_boundaryList, Playground, mousePos);
+                Playground.Children.Remove(boundary.Line);
             }
-            else
-            {
-                _ray = new Ray(mousePos);
-                _ray.CreateRay(_boundaryList, Playground, mousePos);
-            }
+            _boundaryLines.Clear();
         }
     }
 }

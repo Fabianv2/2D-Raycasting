@@ -11,12 +11,49 @@ namespace Raycasting
     {
         private Vector _pos;
         const int rayLength = 10;
-        const int addAngle = 2;
+        const double addAngle = 10;
         public List<Line> _rays = new List<Line>();
 
         public Ray(Vector pos)
         {
             _pos = pos;
+        }
+
+        public void CreateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
+        {
+            for (double i = 0; i < 360; i += addAngle)
+            {
+                double radians = i * Math.PI / 180;
+                Vector direction = new Vector(Math.Cos(radians), Math.Sin(radians));
+
+                LinearGradientBrush gradientBrush = new LinearGradientBrush();
+                gradientBrush.StartPoint = new Point(0, 0);
+                gradientBrush.EndPoint = new Point(1, 1);
+                gradientBrush.GradientStops.Add(new GradientStop(Colors.SpringGreen, 1));
+
+                Line ray = new Line()
+                {
+                    Stroke = gradientBrush,
+                    StrokeThickness = 1,
+                    X1 = _pos.X,
+                    Y1 = _pos.Y,
+                    X2 = _pos.X + direction.X * rayLength,
+                    Y2 = _pos.Y + direction.Y * rayLength
+                };
+
+                _rays.Add(ray);
+
+                Line updatedRay = GetClosestpoint(_boundaries, ray, mousePos);
+
+                if (updatedRay != null)
+                {
+                    _Playground.Children.Add(updatedRay);
+                }
+                else
+                {
+                    _Playground.Children.Add(ray);
+                }
+            }
         }
 
         public void UpdateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
@@ -41,11 +78,6 @@ namespace Raycasting
                 {
                     _Playground.Children.Add(_rays[i]);
                 }
-            }
-
-            foreach (var ray in _rays)
-            {
-                
             }
         }
 
@@ -79,40 +111,6 @@ namespace Raycasting
             }
             return null;
         }
-
-        public void CreateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
-        {
-            for (int i = 0; i < 360; i += addAngle)
-            {
-                double radians = i * Math.PI / 180;
-                Vector direction = new Vector(Math.Cos(radians), Math.Sin(radians));
-
-                Line ray = new Line()
-                {
-                    Stroke = Brushes.White,
-                    StrokeThickness = 1,
-                    X1 = _pos.X,
-                    Y1 = _pos.Y,
-                    X2 = _pos.X + direction.X * rayLength,
-                    Y2 = _pos.Y + direction.Y * rayLength
-                };
-
-                _rays.Add(ray);
-
-                Line updatedRay = GetClosestpoint(_boundaries, ray, mousePos);
-
-                if (updatedRay != null)
-                {
-                    _Playground.Children.Add(updatedRay);
-                }
-                else
-                {
-                    _Playground.Children.Add(ray);
-                }
-                
-            }
-        }
-
 
         private Vector? GetIntersection(Line ray, Line boundary)
         {
