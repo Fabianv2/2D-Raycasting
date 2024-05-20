@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Shapes;
-using System.Xml;
 
 namespace Raycasting
 {
@@ -18,7 +13,8 @@ namespace Raycasting
             Line = new Line()
             {
                 Stroke = Brushes.White,
-                StrokeThickness = 1,
+                StrokeThickness = 2,
+                Effect = new BlurEffect(),
                 X1 = x1,
                 Y1 = y1,
                 X2 = x2,
