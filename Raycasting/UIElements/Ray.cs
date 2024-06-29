@@ -10,8 +10,8 @@ namespace Raycasting
     public class Ray
     {
         private Vector _pos;
-        const int rayLength = 10;
-        const double addAngle = 10;
+        const int rayLength = 5;
+        public double addAngle = 13;
         public List<Line> _rays = new List<Line>();
 
         public Ray(Vector pos)
@@ -21,11 +21,14 @@ namespace Raycasting
 
         public void CreateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
         {
+            _rays.Clear();
+            _Playground.Children.Clear();
+
             for (double i = 0; i < 360; i += addAngle)
             {
                 double radians = i * Math.PI / 180;
                 Vector direction = new Vector(Math.Cos(radians), Math.Sin(radians));
-
+                
                 LinearGradientBrush gradientBrush = new LinearGradientBrush();
                 gradientBrush.StartPoint = new Point(0, 0);
                 gradientBrush.EndPoint = new Point(1, 1);
@@ -58,17 +61,18 @@ namespace Raycasting
 
         public void UpdateRay(List<Boundary> _boundaries, Canvas _Playground, Vector mousePos)
         {
-            for (int i = 0; i < _rays.Count; i++)
+            for (double i = 0; i < _rays.Count; i++)
             {
                 double radians = (i * addAngle) * Math.PI / 180;
                 Vector direction = new Vector(Math.Cos(radians), Math.Sin(radians));
 
-                _rays[i].X1 = mousePos.X;
-                _rays[i].Y1 = mousePos.Y;
-                _rays[i].X2 = mousePos.X + direction.X * rayLength;
-                _rays[i].Y2 = mousePos.Y + direction.Y * rayLength;
+                int a = Convert.ToInt32(i);
+                _rays[a].X1 = mousePos.X;
+                _rays[a].Y1 = mousePos.Y;
+                _rays[a].X2 = mousePos.X + direction.X * rayLength;
+                _rays[a].Y2 = mousePos.Y + direction.Y * rayLength;
 
-                Line updatedRay = GetClosestpoint(_boundaries, _rays[i], mousePos);
+                Line updatedRay = GetClosestpoint(_boundaries, _rays[a], mousePos);
 
                 if (updatedRay != null)
                 {
@@ -76,7 +80,7 @@ namespace Raycasting
                 }
                 else
                 {
-                    _Playground.Children.Add(_rays[i]);
+                    _Playground.Children.Add(_rays[a]);
                 }
             }
         }
@@ -153,6 +157,42 @@ namespace Raycasting
         private double Distance(Vector pos1, Vector pos2)
         {
             return Math.Sqrt(Math.Pow(pos1.X - pos2.X, 2) + Math.Pow(pos1.Y - pos2.Y, 2));
+        }
+
+        public void ChangeRayColor(string color)
+        {
+            LinearGradientBrush brush = new LinearGradientBrush();
+            foreach (var ray in _rays)
+            {
+                switch (color)
+                {
+                    case "Red":
+                        brush.GradientStops.Add(new GradientStop(Colors.Red, 1));
+                        break;
+                    case "Blue":
+                        brush.GradientStops.Add(new GradientStop(Colors.Blue, 1));
+                        break;
+                    case "Yellow":
+                        brush.GradientStops.Add(new GradientStop(Colors.Yellow, 1));
+                        break;
+                    case "Green":
+                        brush.GradientStops.Add(new GradientStop(Colors.Green, 1));
+                        break;
+                    case "LightYellow":
+                        brush.GradientStops.Add(new GradientStop(Colors.LightYellow, 1));
+                        break;
+                    case "LightCoral":
+                        brush.GradientStops.Add(new GradientStop(Colors.LightCoral, 1));
+                        break;
+                    case "IndianRed":
+                        brush.GradientStops.Add(new GradientStop(Colors.IndianRed, 1));
+                        break;
+                    default:
+                        brush.GradientStops.Add(new GradientStop(Colors.SpringGreen, 1));
+                        break;
+                }
+                ray.Stroke = brush;
+            }
         }
     }
 }
