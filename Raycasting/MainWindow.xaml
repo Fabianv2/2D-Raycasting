@@ -6,12 +6,26 @@
         xmlns:local="clr-namespace:Raycasting"
         mc:Ignorable="d"
         Title="MainWindow" Height="1000" Width="1200">
-    <Grid>
-        <Canvas x:Name="Playground" Background="Black" Height="1000" Width="1000" MouseMove="Playground_MouseMove" Margin="0,0,200,-16"></Canvas>
-        <Border BorderBrush="Black" BorderThickness="1" Margin="1013,26,12,743">
-            <Button Content="Create Boundaries" Margin="5,5,6,158" Click="btnCreateBoundaries_Click"/>
-        </Border>
-        <Label Content="Settings" HorizontalAlignment="Left" Margin="1012,4,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="cbxBorderlines" Content="Borderlines" HorizontalAlignment="Left" Margin="1020,90,0,0" VerticalAlignment="Top" Width="160" Checked="BoundaryLines_Checked" Unchecked="BoundaryLines_Unchecked"/>
-    </Grid>
+    <Viewbox>
+        <Grid>
+            <Canvas x:Name="Playground" Background="Black" Height="1000" Width="1000" MouseMove="Playground_MouseMove" Margin="0,0,200,-16"></Canvas>
+            <Border BorderBrush="Black" BorderThickness="1" Margin="1013,26,12,743"></Border>
+            <Button Content="Create Boundaries" Margin="1020,33,19,903" Click="btnCreateBoundaries_Click" ToolTip="Resets current boundaries and creates new ones."/>
+            <Label Content="Settings" HorizontalAlignment="Left" Margin="1012,4,0,0" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbxBoundaryLines" Content="BoundaryLines" HorizontalAlignment="Left" Margin="1020,90,0,0" VerticalAlignment="Top" Width="101" Checked="BoundaryLines_Checked" Unchecked="BoundaryLines_Unchecked" ToolTip="Activates/Deactivates outside lines."/>
+            <Label Content="Ray angle:" HorizontalAlignment="Left" Margin="1018,114,0,0" VerticalAlignment="Top" Height="26" Width="64"/>
+            <Slider x:Name="slr_RayAngle" Value="13" Minimum="0.1" Maximum="30" HorizontalAlignment="Left" Margin="1081,120,0,0" VerticalAlignment="Top" Width="103" ValueChanged="slr_RayAngle_ValueChanged"/>
+            <ComboBox x:Name="cmbx_RayColor" HorizontalAlignment="Left" Margin="1081,149,0,0" VerticalAlignment="Top" Width="103" DropDownClosed="cmbx_RayColor_DropDownClosed">
+                <ComboBoxItem>Red</ComboBoxItem>
+                <ComboBoxItem>Blue</ComboBoxItem>
+                <ComboBoxItem>Yellow</ComboBoxItem>
+                <ComboBoxItem>Green</ComboBoxItem>
+                <ComboBoxItem>LightYellow</ComboBoxItem>
+                <ComboBoxItem>LightCoral</ComboBoxItem>
+                <ComboBoxItem>IndianRed</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">SpringGreen</ComboBoxItem>
+            </ComboBox>
+            <Label Content="Ray color:" HorizontalAlignment="Left" Margin="1018,145,0,0" VerticalAlignment="Top" Height="26" Width="64"/>
+        </Grid>
+    </Viewbox>
 </Window>

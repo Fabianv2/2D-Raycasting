@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,16 +12,18 @@ namespace Raycasting
         private Ray _ray;
         private Random _random = new Random();
         private List<Boundary> _boundaryList = new List<Boundary>();
-        
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeBoundaries();
+
+            //tbx_RayAngle.Text = 2.ToString();
         }
 
         private void InitializeBoundaries()
         {
-            int amountBoundaries = _random.Next(4, 15);
+            int amountBoundaries = _random.Next(3, 13);
 
             for (int i = 0; i < amountBoundaries; i++)
             {
@@ -32,7 +35,7 @@ namespace Raycasting
                 _boundaryList.Add(new Boundary(randomX1, randomY1, randomX2, randomY2));
             }
 
-            if (cbxBorderlines.IsChecked == true)
+            if (cbxBoundaryLines.IsChecked == true)
             {
                 AddBoundaryLines();
             }
@@ -56,7 +59,11 @@ namespace Raycasting
                     Playground.Children.Add(boundary.Line);
                 }
 
-                if (_ray != null)
+                if (_ray != null && _ray.addAngle.ToString() != slr_RayAngle.Value.ToString())
+                {
+                    _ray.CreateRay(_boundaryList, Playground, mousePos);
+                }
+                else if (_ray != null)
                 {
                     _ray.UpdateRay(_boundaryList, Playground, mousePos);
                 }
@@ -106,6 +113,36 @@ namespace Raycasting
                 Playground.Children.Remove(removeBoundary.Line);
                 _boundaryList.RemoveAt(_boundaryList.Count - 1);
             }
+        }
+
+
+        private void cmbx_RayColor_DropDownClosed(object sender, EventArgs e)
+        {
+            if (_ray != null)
+                _ray.ChangeRayColor(cmbx_RayColor.Text);
+        }
+
+        private void slr_RayAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double customAngle = slr_RayAngle.Value;
+
+            if (_ray != null)
+            {
+                if (customAngle >= 0.1 && customAngle <= 30)
+                {
+                    _ray.addAngle = customAngle;
+                }
+                else
+                {
+                    _ray.addAngle = 10;
+                }
+            }
+
+            Vector mousePos = (Vector)Mouse.GetPosition(Playground);
+            if (_ray != null)
+                _ray.CreateRay(_boundaryList, Playground, mousePos);
+            //tbx_RayAngle
+            //<TextBox x:Name="tbx_RayAngle" Text="13" TextWrapping="Wrap" TextChanged="tbx_RayAngle_TextChanged" Margin="1081,119,16,846" ToolTip="The lower the ray angle the more rays will be created. (Min value: 0,1 | Max value: 30)"/>
         }
     }
 }
