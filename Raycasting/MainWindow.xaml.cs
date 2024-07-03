@@ -13,6 +13,8 @@ namespace Raycasting
         private Random _random = new Random();
         private List<Boundary> _boundaryList = new List<Boundary>();
 
+        private Vector prevMousePos;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -49,30 +51,34 @@ namespace Raycasting
         private void Playground_MouseMove(object sender, MouseEventArgs e)
         {
             Vector mousePos = (Vector)e.GetPosition(Playground);
-
+            
             if (mousePos.X >= 0 && mousePos.X <= 1000 && mousePos.Y >= 0 && mousePos.Y <= 1000)
             {
-                Playground.Children.Clear();
+                if (mousePos != prevMousePos)
+                {
+                    Playground.Children.Clear();
 
-                foreach (var boundary in _boundaryList)
-                {
-                    Playground.Children.Add(boundary.Line);
-                }
+                    foreach (var boundary in _boundaryList)
+                    {
+                        Playground.Children.Add(boundary.Line);
+                    }
 
-                if (_ray != null && _ray.addAngle.ToString() != slr_RayAngle.Value.ToString())
-                {
-                    _ray.CreateRay(_boundaryList, Playground, mousePos);
-                }
-                else if (_ray != null)
-                {
-                    _ray.UpdateRay(_boundaryList, Playground, mousePos);
-                }
-                else
-                {
-                    _ray = new Ray(mousePos);
-                    _ray.CreateRay(_boundaryList, Playground, mousePos);
+                    if (_ray != null && _ray.addAngle.ToString() != slr_RayAngle.Value.ToString())
+                    {
+                        _ray.CreateRay(_boundaryList, Playground, mousePos);
+                    }
+                    else if (_ray != null)
+                    {
+                        _ray.UpdateRay(_boundaryList, Playground, mousePos);
+                    }
+                    else
+                    {
+                        _ray = new Ray(mousePos);
+                        _ray.CreateRay(_boundaryList, Playground, mousePos);
+                    }
                 }
             }
+            prevMousePos = mousePos;
         }
 
         private void btnCreateBoundaries_Click(object sender, RoutedEventArgs e)
